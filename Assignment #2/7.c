@@ -15,7 +15,6 @@ void makeMatrixA(){
   for(int i=0;i<30;i++){
     for(int j=0;j<10;j++){
       A[i][j] = num;
-      num++;
     }
   }
 }
@@ -24,7 +23,6 @@ void makeMatrixB(){
   for(int i=0;i<10;i++){
     for(int j=0;j<50;j++){
       B[i][j] = num;
-      num++;
     }
   }
 }
@@ -50,105 +48,126 @@ void divideMatrixB(){
   for(int i=0;i<5;i++){
     for(int j=0;j<25;j++){
       subMatrixB11[i][j] = B[i][j];
-      subMatrixB11[i][j] = B[i][j+25];
-      subMatrixB11[i][j] = B[i+5][j];
-      subMatrixB11[i][j] = B[i+5][j+25];
+      subMatrixB12[i][j] = B[i][j+25];
+      subMatrixB21[i][j] = B[i+5][j];
+      subMatrixB22[i][j] = B[i+5][j+25];
     }
   }
 }
 void makeM1() {
     for (int i = 0; i < 15; i++) {
-        for (int j = 0; j < 5; j++)
-            temp1[i][j] = subMatrixA11[i][j] + subMatrixA22[i][j];
+        for (int j = 0; j < 5; j++){
+         temp1[i][j] = subMatrixA11[i][j] + subMatrixA22[i][j]; 
+        }
     }
     for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 25; j++)
-            temp2[i][j] = subMatrixB11[i][j] + subMatrixB22[i][j];
+        for (int j = 0; j < 25; j++){
+          temp2[i][j] = subMatrixB11[i][j] + subMatrixB22[i][j];
+        }
     }
     for (int i = 0; i < 15; i++) {
         for (int j = 0; j < 25; j++) {
-            for (int k = 0; k < 5; k++)
-                M1[i][j] += temp1[i][k] * temp2[k][j];
+            for (int k = 0; k < 5; k++){
+              M1[i][j] += temp1[i][k] * temp2[k][j];
+            } 
         }
     }
+  
 }
 void makeM2() {
     for (int i = 0; i < 15; i++) {
-        for (int j = 0; j < 5; j++)
-            temp1[i][j] = subMatrixA21[i][j] + subMatrixA22[i][j];
+        for (int j = 0; j < 5; j++){
+         temp1[i][j] = subMatrixA21[i][j] + subMatrixA22[i][j]; 
+        }
     }
     for (int i = 0; i < 15; i++) {
         for (int j = 0; j < 25; j++) {
-            for (int k = 0; k < 5; k++)
-                M2[i][j] += temp1[i][k] * subMatrixB11[k][j];
+            for (int k = 0; k < 5; k++){
+              M2[i][j] += (temp1[i][k] * subMatrixB11[k][j]);
+            }
         }
     }
+  
 }
 void makeM3() {
     for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 25; j++)
-            temp2[i][j] = subMatrixB12[i][j] - subMatrixB22[i][j];
+        for (int j = 0; j < 25; j++){
+         temp2[i][j] = subMatrixB12[i][j] - subMatrixB22[i][j]; 
+        }
     }
     for (int i = 0; i < 15; i++) {
         for (int j = 0; j < 25; j++) {
-            for (int k = 0; k < 5; k++)
-                M3[i][j] += subMatrixA11[i][k] * temp2[k][j];
+            for (int k = 0; k < 5; k++){
+             M3[i][j] += (subMatrixA11[i][k] * temp2[k][j]); 
+            }
         }
     }
+  
 }
 void makeM4() {
     for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 25; j++)
-            temp2[i][j] = subMatrixB21[i][j] - subMatrixB11[i][j];
+        for (int j = 0; j < 25; j++){
+         temp2[i][j] = subMatrixB21[i][j] - subMatrixB11[i][j]; 
+        }
     }
     for (int i = 0; i < 15; i++) {
         for (int j = 0; j < 25; j++) {
-            for (int k = 0; k < 5; k++)
-                M4[i][j] += subMatrixA22[i][k] * temp2[k][j];
+            for (int k = 0; k < 5; k++){
+             M4[i][j] += (subMatrixA22[i][k] * temp2[k][j]); 
+            }
         }
     }
+  
 }
 void makeM5() {
     for (int i = 0; i < 15; i++) {
-        for (int j = 0; j < 5; j++)
-            temp1[i][j] = subMatrixA11[i][j] + subMatrixA12[i][j];
+        for (int j = 0; j < 5; j++){
+         temp1[i][j] = subMatrixA11[i][j] + subMatrixA12[i][j]; 
+        }
     }
     for (int i = 0; i < 15; i++) {
         for (int j = 0; j < 25; j++) {
-            for (int k = 0; k < 5; k++)
-                M5[i][j] += temp1[i][k] * subMatrixB22[k][j];
+            for (int k = 0; k < 5; k++){
+             M5[i][j] += temp1[i][k] * subMatrixB22[k][j]; 
+            }
         }
     }
 }
 void makeM6() {
     for (int i = 0; i < 15; i++) {
-        for (int j = 0; j < 5; j++)
-            temp1[i][j] = subMatrixA21[i][j] - subMatrixA11[i][j];
+        for (int j = 0; j < 5; j++){
+         temp1[i][j] = subMatrixA21[i][j] - subMatrixA11[i][j]; 
+        }
     }
     for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 25; j++)
-            temp2[i][j] = subMatrixB11[i][j] + subMatrixB12[i][j];
+        for (int j = 0; j < 25; j++){
+         temp2[i][j] = subMatrixB11[i][j] + subMatrixB12[i][j]; 
+        }
     }
     for (int i = 0; i < 15; i++) {
         for (int j = 0; j < 25; j++) {
-            for (int k = 0; k < 5; k++)
-                M6[i][j] += temp1[i][k] * temp2[k][j];
+            for (int k = 0; k < 5; k++){
+             M6[i][j] += temp1[i][k] * temp2[k][j]; 
+            }
         }
     }
 }
 void makeM7() {
     for (int i = 0; i < 15; i++) {
-        for (int j = 0; j < 5; j++)
-            temp1[i][j] = subMatrixA12[i][j] - subMatrixA22[i][j];
+        for (int j = 0; j < 5; j++){
+         temp1[i][j] = subMatrixA12[i][j] - subMatrixA22[i][j]; 
+        }
     }
     for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 25; j++)
-            temp2[i][j] = subMatrixB21[i][j] + subMatrixB22[i][j];
+        for (int j = 0; j < 25; j++){
+         temp2[i][j] = subMatrixB21[i][j] + subMatrixB22[i][j]; 
+        }
     }
     for (int i = 0; i < 15; i++) {
         for (int j = 0; j < 25; j++) {
-            for (int k = 0; k < 5; k++)
-                M7[i][j] += temp1[i][k] * temp2[k][j];
+            for (int k = 0; k < 5; k++){
+             M7[i][j] += temp1[i][k] * temp2[k][j]; 
+            }
         }
     }
 }
@@ -159,6 +178,7 @@ void makePartictionOfMatrixC2() {
             subMatrixC12[i][j] = M3[i][j] + M5[i][j];
             subMatrixC21[i][j] = M2[i][j] + M4[i][j];
             subMatrixC22[i][j] = M1[i][j] - M2[i][j] + M3[i][j] + M6[i][j];
+          
         }
     }
 }
@@ -194,14 +214,14 @@ int main(void) {
   float time1, time2;
   makeMatrixA();
   makeMatrixB();
-  // ordinaryMultiplicationStart = clock();
-  // ordinaryMultiplicationWithMatrixC1();
-  // // printMatrixC1();
-  
-  // printf("\n");
-  // printf("Time for ordinary multiplication: \n");
-  // ordinaryMultiplicationEnd = clock();
-  // time1 = (float)(ordinaryMultiplicationEnd - ordinaryMultiplicationStart) / CLOCKS_PER_SEC;
+  printf("Ordinary Multiplication: \n");
+  ordinaryMultiplicationStart = clock();
+  ordinaryMultiplicationWithMatrixC1();
+  printMatrixC1();
+  printf("\n");
+  ordinaryMultiplicationEnd = clock();
+  time1 = (float)(ordinaryMultiplicationEnd - ordinaryMultiplicationStart) / CLOCKS_PER_SEC;
+  printf("Strassen Multiplication: \n");
   strassenMultiplicationStart = clock();
   divideMatrixA();
   divideMatrixB();
@@ -215,9 +235,9 @@ int main(void) {
   makePartictionOfMatrixC2();
   mergeMatrixC2();
   printMatrixC2();
-  // strassenMultiplicationEnd = clock();
-  // time2 = (float)(strassenMultiplicationEnd - strassenMultiplicationStart) / CLOCKS_PER_SEC;
-  // printf("ordinary multiplication: %.7f \n", time1);
-  // printf("Strassen multiplication: %.7f \n", time2);
+  strassenMultiplicationEnd = clock();
+  time2 = (float)(strassenMultiplicationEnd - strassenMultiplicationStart) / CLOCKS_PER_SEC;
+  printf("Time for ordinary multiplication: %.7f \n", time1);
+  printf("Time for Strassen multiplication: %.7f \n", time2);
   return 0;
 }

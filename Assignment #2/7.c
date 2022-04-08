@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-int A[30][10], B[10][50], C1[30][50], C2[30][50] = { 0 }; 
+int A[30][10], B[10][50], C1[30][50], C2[30][50]; 
 int subMatrixA11[15][5], subMatrixA12[15][5], subMatrixA21[15][5], subMatrixA22[15][5]; 
 int subMatrixB11[5][25], subMatrixB12[5][25], subMatrixB21[5][25], subMatrixB22[5][25]; 
 int temp1[15][5], temp2[5][25];
@@ -166,20 +166,27 @@ void mergeMatrixC2() {
     for(int i=0;i<15;i++){
       for(int j=0;j<25;j++){
         C2[i][j]=subMatrixC11[i][j];
-        C2[i][j+25]=subMatrixC11[i][j];
-        C2[i+15][j]=subMatrixC11[i][j];
-        C2[i+15][j+25]=subMatrixC11[i][j];
+        C2[i][j+25]=subMatrixC12[i][j];
+        C2[i+15][j]=subMatrixC21[i][j];
+        C2[i+15][j+25]=subMatrixC22[i][j];
       }
     }
 }
 void printMatrixC1(){
-  printf("%d",C1[0][0]);
-  // for(int i=0;i<30;i++){
-  //   for(int j=0;j<50;j++){
-  //     printf("%d",C1[i][j]);
-  //   }
-  //   printf("\n");
-  // }
+  for(int i=0;i<30;i++){
+    for(int j=0;j<50;j++){
+      printf("%d ",C1[i][j]);
+    }
+    printf("\n");
+  }
+}
+void printMatrixC2(){
+  for(int i=0;i<30;i++){
+    for(int j=0;j<50;j++){
+      printf("%d ",C2[i][j]);
+    }
+    printf("\n");
+  }
 }
 int main(void) {
   int ordinaryMultiplicationStart,ordinaryMultiplicationEnd;
@@ -187,13 +194,14 @@ int main(void) {
   float time1, time2;
   makeMatrixA();
   makeMatrixB();
-  ordinaryMultiplicationStart = clock();
-  ordinaryMultiplicationWithMatrixC1();
-  printMatrixC1();
-  printf("\n");
-  printf("Time for ordinary multiplication: \n");
-  ordinaryMultiplicationEnd = clock();
-  time1 = (float)(ordinaryMultiplicationEnd - ordinaryMultiplicationStart) / CLOCKS_PER_SEC;
+  // ordinaryMultiplicationStart = clock();
+  // ordinaryMultiplicationWithMatrixC1();
+  // // printMatrixC1();
+  
+  // printf("\n");
+  // printf("Time for ordinary multiplication: \n");
+  // ordinaryMultiplicationEnd = clock();
+  // time1 = (float)(ordinaryMultiplicationEnd - ordinaryMultiplicationStart) / CLOCKS_PER_SEC;
   strassenMultiplicationStart = clock();
   divideMatrixA();
   divideMatrixB();
@@ -206,10 +214,10 @@ int main(void) {
   makeM7();
   makePartictionOfMatrixC2();
   mergeMatrixC2();
-  printf("Strassen multplication: \n");
-  strassenMultiplicationEnd = clock();
-  time2 = (float)(strassenMultiplicationEnd - strassenMultiplicationStart) / CLOCKS_PER_SEC;
-  printf("ordinary multiplication: %.7f \n", time1);
-  printf("Strassen multiplication: %.7f \n", time2);
+  printMatrixC2();
+  // strassenMultiplicationEnd = clock();
+  // time2 = (float)(strassenMultiplicationEnd - strassenMultiplicationStart) / CLOCKS_PER_SEC;
+  // printf("ordinary multiplication: %.7f \n", time1);
+  // printf("Strassen multiplication: %.7f \n", time2);
   return 0;
 }

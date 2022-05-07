@@ -29,7 +29,20 @@ int main(void){
     }
     traverse(linkedList);
     node* reversedLinkedList = reverse(linkedList);
+    printf("Reverse Linked List\n");
     traverse(reversedLinkedList);
+    printf("Append 10 to Linked List\n");
+    append(linkedList,10);
+    traverse(linkedList);
+    printf("Remove 10 to Linked List\n");
+    removeNode(linkedList,10);
+    traverse(linkedList);
+    printf("Insert 10 in Third Index to a linked List\n");
+    insert(linkedList,10,3);
+    traverse(linkedList);
+    printf("Remove 10 to Linked List\n");
+    removeNode(linkedList,10);
+    traverse(linkedList);
     return 0;
 }
 

@@ -1,283 +1,207 @@
+/*
+ 5. Write a code to construct a red-black tree by successively inserting the keys 41, 38, 31, 12, 19, 8 into an
+    initially empty red-black tree. You are required to implement functions to build the tree, such as leftChild-rotate and
+    right-rotate. Each key should be accompanied by its corresponding color (red or black) in your code. Then,
+    show the in-order/pre-order/post-order traversal results in your console.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct node
-{
-    struct node *parent;
-    struct node *left;
-    struct node *right;
+typedef struct NODE{
+    struct NODE *parent;
+    struct NODE *leftChild;
+    struct NODE *rightChild;
     int data;
     int color;
-} node;
+}node;
 
-typedef struct rbtree
-{
+typedef struct TREE{
     node *root;
     node *NIL;
-} rbtree;
+}tree;
 
-node *new_node(int data)
-{
-    node *n = malloc(sizeof(node));
+node *newNode(int data){
+    node *tempNode = malloc(sizeof(node));
 
-    n->parent = NULL;
-    n->left = NULL;
-    n->right = NULL;
-    n->data = data;
-    n->color = 1;
+    tempNode->parent = NULL;
+    tempNode->leftChild = NULL;
+    tempNode->rightChild = NULL;
+    tempNode->data = data;
+    tempNode->color = 1;
 
-    return n;
+    return tempNode;
 }
 
-rbtree *new_rbtree()
-{
-    rbtree *t = malloc(sizeof(rbtree));
-    node *nil_node = malloc(sizeof(node));
+void leftRotation(tree *targetTree, node *targetNode){
+    node *tempNode = targetNode->rightChild;
+    targetNode->rightChild = tempNode->leftChild;
 
-    nil_node->parent = NULL;
-    nil_node->left = NULL;
-    nil_node->right = NULL;
-    nil_node->data = 0;
-    nil_node->color = 0;
-    t->NIL = nil_node;
-    t->root = t->NIL;
+    if (tempNode->leftChild != targetTree->NIL){
+        tempNode->leftChild->parent = targetNode;
+    }
 
-    return t;
+    tempNode->parent = targetNode->parent;
+
+    if (targetNode->parent == targetTree->NIL){
+        targetTree->root = tempNode;
+    }
+    else if (targetNode == targetNode->parent->leftChild){
+        targetNode->parent->leftChild = tempNode;
+    }
+    else{
+        targetNode->parent->rightChild = tempNode;
+    }
+    tempNode->leftChild = targetNode;
+    targetNode->parent = tempNode;
 }
 
-void left_rotation(rbtree *t, node *x)
-{
-    // x의 오른쪽 자식 노드 y 선언
-    node *y = x->right;
+void rightRotation(tree *targetTree, node *targetNode){
+    node *tempNode = targetNode->leftChild;
+    targetNode->leftChild = tempNode->rightChild;
 
-    // y의 왼쪽 자식 노드를 x의 오른쪽 자식 노드로 변경
-    x->right = y->left;
+    if (tempNode->rightChild != targetTree->NIL){
+        tempNode->rightChild->parent = targetNode;
+    }
 
-    // y의 왼쪽 자식 노드가 NIL 노드가 아니면 y의 왼쪽 자식 노드의 부모 노드를 x로 변경
-    if (y->left != t->NIL)
-        y->left->parent = x;
+    tempNode->parent = targetNode->parent;
 
-    // y의 부모 노드를 x의 부모 노드로 변경
-    y->parent = x->parent;
-
-    // x의 부모 노드가 NIL 노드이면 트리의 루트 노드를 y로 변경
-    if (x->parent == t->NIL)
-        t->root = y;
-    // x가 부모 노드의 왼쪽 자식 노드이면 x의 부모 노드의 왼쪽 자식 노드를 y로 변경
-    else if (x == x->parent->left)
-        x->parent->left = y;
-    // x가 부모 노드의 오른쪽 자식 노드이면 x의 부모 노드의 오른쪽 자식 노드를 y로 변경
-    else
-        x->parent->right = y;
-
-    // y의 왼쪽 자식 노드를 x로 변경
-    y->left = x;
-    // x의 부모 노드를 y로 변경
-    x->parent = y;
+    if (targetNode->parent == targetTree->NIL){
+        targetTree->root = tempNode;
+    }
+    else if (targetNode == targetNode->parent->leftChild){
+        targetNode->parent->leftChild = tempNode;
+    }
+    else{
+        targetNode->parent->rightChild = tempNode;
+    }
+    tempNode->rightChild = targetNode;
+    targetNode->parent = tempNode;
 }
 
-void right_rotation(rbtree *t, node *x)
-{
-    // x의 왼쪽 자식 노드 y 선언
-    node *y = x->left;
-
-    // y의 오른쪽 자식 노드를 x의 왼쪽 자식 노드로 변경
-    x->left = y->right;
-
-    // y의 오른쪽 자식 노드가 NIL 노드가 아니면 y의 오른쪽 자식 노드의 부모 노드를 x로 변경
-    if (y->right != t->NIL)
-        y->right->parent = x;
-
-    // y의 부모 노드를 x의 부모 노드로 변경
-    y->parent = x->parent;
-
-    // x의 부모 노드가 NIL 노드이면 트리의 루트 노드를 y로 변경
-    if (x->parent == t->NIL)
-        t->root = y;
-    // x가 x의 부모 노드의 왼쪽 자식 노드이면 x의 부모 노드의 왼쪽 자식 노드를 y로 변경
-    else if (x == x->parent->left)
-        x->parent->left = y;
-    // x가 x의 부모 노드의 오른쪽 자식 노드이면 x의 부모 노드의 오른쪽 자식 노드를 y로 변경
-    else
-        x->parent->right = y;
-
-    // y의 오른쪽 자식 노드를 x로 변경
-    y->right = x;
-    // x의 부모 노드를 y로 변경
-    x->parent = y;
-}
-
-void insertion_fixup(rbtree *t, node *z)
-{
-    // z의 부모 노드가 붉은 노드인 경우
-    while (z->parent->color == 1)
-    {
-        // z의 부모 노드가 왼쪽 자식 노드인 경우
-        if (z->parent == z->parent->parent->left)
-        {
-            // z의 오른쫀 삼촌 노드 y 선언
-            node *y = z->parent->parent->right;
-
-            // 삼촌 노드 y가 붉은 노드인 경우
-            if (y->color == 1)
-            {
-                // z의 부모 노드를 검은 노드로 변환
-                z->parent->color = 0;
-                // z의 삼촌 노드 y를 검은 노드로 변환
-                y->color = 0;
-                // z의 조부모 노드를 붉은 노드로 변환
-                z->parent->parent->color = 1;
-                // z를 z의 조부모 노드로 변경
-                z = z->parent->parent;
+void reconstructRedBlackTree(tree *targetTree, node *targetNode){
+    while (targetNode->parent->color == 1){
+        if (targetNode->parent == targetNode->parent->parent->leftChild){
+            node *tempNode = targetNode->parent->parent->rightChild;
+            if (tempNode->color == 1){
+                targetNode->parent->color = 0;
+                tempNode->color = 0;
+                targetNode->parent->parent->color = 1;
+                targetNode = targetNode->parent->parent;
             }
-            else
-            {
-                // z가 부모 노드의 오른쪽 자식인 경우
-                if (z == z->parent->right)
-                {
-                    // z에 z의 부모 노드 저장
-                    z = z->parent;
-                    // 레프트 로테이션 실행
-                    left_rotation(t, z);
+            else{
+                if (targetNode == targetNode->parent->rightChild){
+                    targetNode = targetNode->parent;
+                    leftRotation(targetTree, targetNode);
                 }
-                // z의 부모 노드를 검은 노드로 변환
-                z->parent->color = 0;
-                // z의 조부모 노드를 붉은 노드로 변환
-                z->parent->parent->color = 1;
-                // 라이트 로테이션 실행
-                right_rotation(t, z->parent->parent);
+                targetNode->parent->color = 0;
+                targetNode->parent->parent->color = 1;
+                rightRotation(targetTree, targetNode->parent->parent);
             }
         }
-        // z의 부모 노드가 오른쪽 자식 노드인 경우
-        else
-        {
-            // z의 왼쪽 삼촌 노드 y 선언
-            node *y = z->parent->parent->left;
-
-            if (y->color == 1)
-            {
-                // z의 부모 노드를 검은 노드로 변환
-                z->parent->color = 0;
-                // z의 삼촌 노드 y를 검은 노드로 변환
-                y->color = 0;
-                // z의 조부모 노드를 붉은 노드로 변환
-                z->parent->parent->color = 1;
-                // z를 z의 조부모 노드로 변경
-                z = z->parent->parent;
+        else{
+            node *tempNode = targetNode->parent->parent->leftChild;
+            if (tempNode->color == 1){
+                targetNode->parent->color = 0;
+                tempNode->color = 0;
+                targetNode->parent->parent->color = 1;
+                targetNode = targetNode->parent->parent;
             }
-            else
-            {
-                // z가 부모 노드의 왼쪽 자식 노드인 경우
-                if (z == z->parent->left)
-                {
-                    // z에 z의 부모 노드 저장
-                    z = z->parent;
-                    // 라이트 로테이션
-                    right_rotation(t, z);
+            else{
+                if (targetNode == targetNode->parent->leftChild){
+                    targetNode = targetNode->parent;
+                    rightRotation(targetTree, targetNode);
                 }
-                // z의 부모 노드를 검은 노드로 변환
-                z->parent->color = 0;
-                // z의 조부모 노드를 붉으 노드로 변환
-                z->parent->parent->color = 1;
-                // 레프트 로테이션 실행
-                left_rotation(t, z->parent->parent);
+                targetNode->parent->color = 0;
+                targetNode->parent->parent->color = 1;
+                leftRotation(targetTree, targetNode->parent->parent);
             }
         }
     }
-    // 트리의 루트 노드롤 검은 노드로 변환
-    t->root->color = 0;
+    targetTree->root->color = 0;
 }
 
-void insertion(rbtree *t, node *z)
-{
-    // 트리의 NIL인 노드 y 선언
-    node *y = t->NIL;
-    // 트리의 루트 노드 temp 선언
-    node *temp = t->root;
-
-    // temp가 트리의 NIL이 아니면 반복문 실행
-    while (temp != t->NIL)
-    {
-        // y는 temp를 저장
-        y = temp;
-        // z의 data가 temp의 data보다 작으면 temp에 temp의 왼쪽 자식 노드 저장
-        if (z->data < temp->data)
-            temp = temp->left;
-        // z의 data가 temp의 data보다 크면 temp에 temp의 오른쪽 자식 노드 저장
-        else
-            temp = temp->right;
+void appendNode(tree *targetTree, node *targetNode){
+    node *tempNode1 = targetTree->NIL;
+    node *tempNode2 = targetTree->root;
+    while (tempNode2 != targetTree->NIL){
+        tempNode1 = tempNode2;
+        if (targetNode->data < tempNode2->data){
+            tempNode2 = tempNode2->leftChild;
+        }
+        else{
+            tempNode2 = tempNode2->rightChild;
+        }
     }
-
-    // z의 부모 노드를 y로 변경
-    z->parent = y;
-
-    // y는 트리의 NIL이면 트리의 루트 노드를 z로 변경
-    if (y == t->NIL)
-        t->root = z;
-    // z의 data가 y의 data보다 작으면 y의 왼쪽 자식 노드를 z로 변경
-    else if (z->data < y->data)
-        y->left = z;
-    // z의 data가 y의 data보다 크면 y의 오른쪽 자식 노드를 z로 변경
-    else
-        y->right = z;
-
-    // z의 왼쪽 자식 노드를 트리의 NIL로 변경
-    z->left = t->NIL;
-    // z의 오른쪽 자식 노드를 트리의 NIL로 변경
-    z->right = t->NIL;
-    // z의 색깔을 빨강으로 변경
-    z->color = 1;
-
-    insertion_fixup(t, z);
+    targetNode->parent = tempNode1;
+    if (tempNode1 == targetTree->NIL){
+        targetTree->root = targetNode;
+    }
+    else if (targetNode->data < tempNode1->data){
+        tempNode1->leftChild = targetNode;
+    }
+    else{
+        tempNode1->rightChild = targetNode;
+    }
+    targetNode->leftChild = targetTree->NIL;
+    targetNode->rightChild = targetTree->NIL;
+    targetNode->color = 1;
+    reconstructRedBlackTree(targetTree, targetNode);
 }
 
-void inorder(rbtree *t, node *n)
-{
-    // 노드 n이 트리의 NIL이 아니면 n의 왼쪽 자식 노드를 출력 후 오른쪽 자식 노드를 출력
-    if (n != t->NIL)
-    {
-        inorder(t, n->left);
-        printf("%d \n", n->data);
-        inorder(t, n->right);
+void inOrder(tree *targetTree, node *targetNode){
+    if (targetNode != targetTree->NIL){
+        inOrder(targetTree, targetNode->leftChild);
+        printf("%d ", targetNode->data);
+        inOrder(targetTree, targetNode->rightChild);
     }
 }
 
-int main()
-{
-    // 새로운 레드-블랙 트리 생성
-    rbtree *t = new_rbtree();
+void preOrder(tree *targetTree, node *targetNode){
+    if (targetNode != targetTree->NIL){
+        printf("%d ", targetNode->data);
+        preOrder(targetTree, targetNode->leftChild);
+        preOrder(targetTree, targetNode->rightChild);
+    }
+}
 
-    node *a, *b, *c, *d, *e, *f, *g, *h, *i, *j, *k, *l, *m;
+void postOrder(tree *targetTree, node *targetNode){
+    if (targetNode != targetTree->NIL){
+        postOrder(targetTree, targetNode->leftChild);
+        postOrder(targetTree, targetNode->rightChild);
+        printf("%d ", targetNode->data);
+    }
+}
 
-    a = new_node(10);
-    b = new_node(20);
-    c = new_node(30);
-    d = new_node(100);
-    e = new_node(90);
-    f = new_node(40);
-    g = new_node(50);
-    h = new_node(60);
-    i = new_node(70);
-    j = new_node(80);
-    k = new_node(150);
-    l = new_node(110);
-    m = new_node(120);
 
-    insertion(t, a);
-    insertion(t, b);
-    insertion(t, c);
-    insertion(t, d);
-    insertion(t, e);
-    insertion(t, f);
-    insertion(t, g);
-    insertion(t, h);
-    insertion(t, i);
-    insertion(t, j);
-    insertion(t, k);
-    insertion(t, l);
-    insertion(t, m);
 
-    inorder(t, t->root);
+int main(){
+
+    int arr[6] = {41, 38, 31, 12, 19, 8};
+
+    tree *newTree = malloc(sizeof(tree));
+    node *nilNode = malloc(sizeof(node));
+
+    nilNode->parent = NULL;
+    nilNode->leftChild = NULL;
+    nilNode->rightChild = NULL;
+    nilNode->data = 0;
+    nilNode->color = 0;
+    newTree->NIL = nilNode;
+    newTree->root = newTree->NIL;
+
+    for(int i=0;i<6;i++){
+        node *tempNode = newNode(arr[i]);
+        appendNode(newTree, tempNode);
+    }
+
+    inOrder(newTree, newTree->root);
+    printf("\n");
+    preOrder(newTree, newTree->root);
+    printf("\n");
+    postOrder(newTree, newTree->root);
+    printf("\n");
+
 
     return 0;
 }

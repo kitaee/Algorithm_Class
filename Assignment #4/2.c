@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-int tempMatrix[501][2];
-int minimunCalculation[501][501];
+int tempMatrix[300][2];
+int minimunCalculation[300][300];
 int matrix1[5][3];
 int matrix2[3][7];
 int matrix3[7][10];
@@ -33,7 +33,16 @@ int main(void){
         }
     }
     matrixMultiplication();
+    printf("******** Output Matrix ********\n");
     printMatrix();
+    
+    printf("******** Minimum Number of Compuation ********\n");
+    printf("%d\n",calculateMatrix(5,3,7,10));
+    printf("******** Optimal Chain Order ********\n");
+    printf("There are Two Cases of Multiplication\n");
+    printf("Case1 : (Matrix1 * Matrix2) * Matrix3 = %d\n",5*3*7+5*7*10);
+    printf("case2 : (Matrix1 * (Matrix2 * Matrix3) = %d\n",3*7*10+5*3*10);
+    printf("Optimal Chain Order : Case2 because It has Minimum Number of Computation\n");
 }
 
 int calculateMatrix(int row1, int row2, int row3, int row4){
@@ -53,7 +62,7 @@ int calculateMatrix(int row1, int row2, int row3, int row4){
                 minimunCalculation[n][m] = 0;
             }
             else{
-                minimunCalculation[n][m] = 987654321;
+                minimunCalculation[n][m] = 99999;
                 for(int k = n; k < m; k++){
                     minimunCalculation[n][m] = getMin(minimunCalculation[n][m],minimunCalculation[n][k] + minimunCalculation[k+1][m] + ( tempMatrix[n][0] * tempMatrix[k][1] * tempMatrix[m][1] ));
                 }
@@ -72,11 +81,11 @@ int getMin(int x, int y){
 }
 void matrixMultiplication(){
     int temp;
-    for(int i=0;i<5;i++){
-        for(int j=0;j<7;j++){
+    for(int i=0;i<3;i++){
+        for(int j=0;j<10;j++){
             temp = 0;
-            for(int k = 0;k<3;k++){
-                temp += (matrix1[i][k]*matrix2[k][j]);
+            for(int k = 0;k<7;k++){
+                temp += (matrix2[i][k]*matrix3[k][j]);
             }
             outputTempMatrix[i][j] = temp;
         }
@@ -84,8 +93,8 @@ void matrixMultiplication(){
     for(int i=0;i<5;i++){
         for(int j=0;j<10;j++){
             temp = 0;
-            for(int k = 0;k<7;k++){
-                temp += (outputTempMatrix[i][k]*matrix3[k][j]);
+            for(int k = 0;k<3;k++){
+                temp += (matrix1[i][k]*outputTempMatrix[k][j]);
             }
             outputMatrix[i][j] = temp;
         }

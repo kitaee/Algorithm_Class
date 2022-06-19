@@ -1,48 +1,48 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-int cutRod(int n);
+int divideRod(int n);
 int getMaxValue(int a, int b);
 
-int rodPrice[11] = {0,1,4,5,7,9,11,13,13,15,16};
-int maxPrice[11];
+int rodPrice[11] = { 0,1,4,5,7,9,11,13,13,15,16 };
+int memorizationInformation[11];
+int cutInformation[11]={0};
 
-int main(void){
-  printf("Maximum Prices : %d\n", cutRod(10));
-  return 0;
+int divideRod(int length) {
+    int maxValue = 0;
+
+    if (memorizationInformation[length] != 0) {
+        return memorizationInformation[length];
+    }
+
+    for (int i = 1; i <= length; i++) {
+      if(maxValue<rodPrice[i]+divideRod(length-i)){
+        maxValue=rodPrice[i]+divideRod(length-i);
+        if(i!=1){
+          cutInformation[i]++;
+        }
+        else{
+          continue;
+        }
+      }
+    }
+    memorizationInformation[length] = maxValue;
+    return maxValue;
 }
 
-int cutRod(int n){
-  int maxValue = 0;
-  int temp;
+int getMaxValue(int a, int b) {
+    if (a >= b) {
+        return a;
+    }
+    else {
+        return b;
+    }
+}
 
-  if(n==0){
-    return 0;
-  }
-
-  if(maxPrice[n]!=0){
-    return maxPrice[n];
-  }
-
-  for(int i=1;i<=n;i++){  
-    maxValue = getMaxValue(maxValue, rodPrice[i] + cutRod(n-i));
-    
-  }
-
-  maxPrice[n] = maxValue;
-
+int main(void) {
+  printf("Maximum Prices : %d\n", divideRod(10));
   for(int i=1;i<=10;i++){
-    printf("%d ", maxPrice[i]);
+    printf("%d의 길이로 %d번 막대기를 잘랐습니다.\n", i, cutInformation[i]);
   }
-
-  printf("\n");
-  return maxValue;
-}
-
-int getMaxValue(int a, int b){
-  if(a>=b){
-    return a;
-  }
-  else{
-    return b;
-  }
+  return 0;
 }
